@@ -27,7 +27,7 @@ class CacheSimulator:
             self.cache_hit += 1
             Listnode = self.cache[page]
             if Listnode != self.head:
-                # Move the accessed node to the head (MRU)
+                #MRU
                 if Listnode == self.tail:
                     self.tail = Listnode.prev
                 else:
@@ -43,7 +43,7 @@ class CacheSimulator:
             node = ListNode(page)
             self.cache[page] = node
             if len(self.cache) > self.cache_slots:
-                # Remove the least recently used node (LRU)
+                # rm LRU
                 del self.cache[self.tail.data]
                 self.tail = self.tail.prev
                 self.tail.next = None
@@ -52,7 +52,7 @@ class CacheSimulator:
                 self.head = node
                 self.tail = node
             else:
-                # Add the new node to the head (MRU)
+                # Add MRU
                 node.next = self.head
                 self.head.prev = node
                 self.head = node
