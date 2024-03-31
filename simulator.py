@@ -52,6 +52,8 @@ class CacheSimulator:
                 self.head = node
                 self.tail = node
             else:
+
+
                 # Add MRU
                 node.next = self.head
                 self.head.prev = node
