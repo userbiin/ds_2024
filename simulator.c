@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 // Define ListNode structure
 typedef struct ListNode {
-    char data[100];
-    struct ListNode *next;
+    int data;
+    struct ListNode* next;
 } ListNode;
 
 // Define CacheSimulator structure
@@ -13,112 +12,114 @@ typedef struct CacheSimulator {
     int cache_slots;
     int cache_hit;
     int tot_cnt;
-    ListNode *head;
-    ListNode *tail;
-    ListNode **cache;
+    ListNode* cache;
+    ListNode* head;
 } CacheSimulator;
 
-// Initialize CacheSimulator
-CacheSimulator *initializeCacheSimulator(int cache_slots) {
-    CacheSimulator *cache_sim = (CacheSimulator *)malloc(sizeof(CacheSimulator));
+// Function to create a new ListNode
+ListNode* newListNode(int data) {
+    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+// Function to initialize CacheSimulator
+CacheSimulator* newCacheSimulator(int cache_slots) {
+    CacheSimulator* cache_sim = (CacheSimulator*)malloc(sizeof(CacheSimulator));
     cache_sim->cache_slots = cache_slots;
     cache_sim->cache_hit = 0;
     cache_sim->tot_cnt = 1;
-    cache_sim->cache = (ListNode **)malloc(cache_slots * sizeof(ListNode *));
+    cache_sim->cache = NULL;
     cache_sim->head = NULL;
-    cache_sim->tail = NULL;
     return cache_sim;
 }
 
-// Function to create a new ListNode
-ListNode *createListNode(char *data) {
-    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-    strcpy(newNode->data, data);
-    newNode->next = NULL;
-    return newNode;
-}
-
-// Function to add a new ListNode to the front of the list
-void addListNodeToFront(ListNode **head, ListNode *node) {
-    if (*head == NULL) {
-        *head = node;
-    } else {
-        node->next = *head;
-        *head = node;
-    }
-}
-
-// Function to remove the tail ListNode from the list
-void removeTailListNode(ListNode **head) {
-    if (*head == NULL)
-        return;
-    ListNode *current = *head;
-    while (current->next->next != NULL) {
-        current = current->next;
-    }
-    free(current->next);
-    current->next = NULL;
-}
-
-// Function to simulate cache
-void do_sim(CacheSimulator *cache_sim, char *page) {
-    cache_sim->tot_cnt += 1;
-    int i;
-    for (i = 0; i < cache_sim->cache_slots; i++) {
-        if (cache_sim->cache[i] != NULL && strcmp(cache_sim->cache[i]->data, page) == 0) {
+// Function to perform simulation
+void do_sim(CacheSimulator* cache_sim, int page) {
+    cache_sim->tot_cnt++;
+    ListNode* node = cache_sim->cache;
+    while (node != NULL) {
+        if (node->data == page) {
             // Cache hit
-            cache_sim->cache_hit += 1;
-            ListNode *listnode = cache_sim->cache[i];
-            if (listnode != cache_sim->head) {
-                // MRU
-                ListNode *temp = cache_sim->head;
-                cache_sim->head = listnode;
-                listnode->next = temp;
+            cache_sim->cache_hit++;
+            if (node != cache_sim->head) {
+                // Move the node to the head
+                ListNode* prev_node = cache_sim->head;
+                while (prev_node->next != node) {
+                    prev_node = prev_node->next;
+                }
+                prev_node->next = node->next;
+                node->next = cache_sim->head;
+                cache_sim->head = node;
             }
             return;
         }
+        node = node->next;
     }
+
     // Cache miss
-    ListNode *node = createListNode(page);
-    if (cache_sim->cache_slots > 0) {
-        removeTailListNode(&(cache_sim->head));
+    node = newListNode(page);
+    node->next = cache_sim->head;
+    cache_sim->head = node;
+
+    // Add the new node to cache
+    if (cache_sim->cache == NULL) {
+        cache_sim->cache = node;
     }
-    addListNodeToFront(&(cache_sim->head), node);
-    cache_sim->cache[cache_sim->cache_hit % cache_sim->cache_slots] = node;
+    else {
+        ListNode* last_node = cache_sim->cache;
+        while (last_node->next != NULL) {
+            last_node = last_node->next;
+        }
+        last_node->next = node;
+    }
+
+    // If cache size exceeds cache_slots, remove the LRU node
+    if (cache_sim->cache_slots > 0) {
+        ListNode* prev_node = NULL;
+        ListNode* curr_node = cache_sim->head;
+        while (curr_node->next != NULL) {
+            prev_node = curr_node;
+            curr_node = curr_node->next;
+        }
+        free(curr_node);
+        if (prev_node != NULL) {
+            prev_node->next = NULL;
+        }
+        else {
+            cache_sim->head = NULL;
+            cache_sim->cache = NULL;
+        }
+    }
 }
 
-// Function to print cache statistics
-void print_stats(CacheSimulator *cache_sim) {
-    printf("cache_slot = %d, cache_hit = %d, hit ratio = %f\n", cache_sim->cache_slots, cache_sim->cache_hit,
-           (float)cache_sim->cache_hit / cache_sim->tot_cnt);
+// Function to print statistics
+void print_stats(CacheSimulator* cache_sim) {
+    printf("cache_slot = %d, cache_hit = %d, hit ratio = %f\n", cache_sim->cache_slots, cache_sim->cache_hit, (float)cache_sim->cache_hit / cache_sim->tot_cnt);
 }
 
-// Main function
 int main() {
-    FILE *data_file = fopen("/workspaces/ds_2024/linkbench.trc", "r");
+    FILE* data_file = fopen("/workspaces/ds_2024/linkbench.trc", "r");
     if (data_file == NULL) {
         printf("Error opening file.\n");
         return 1;
     }
-    char line[100];
-    int cache_slots;
-    for (cache_slots = 100; cache_slots <= 1000; cache_slots += 100) {
-        CacheSimulator *cache_sim = initializeCacheSimulator(cache_slots);
-        while (fgets(line, sizeof(line), data_file)) {
-            // Remove newline character
-            line[strcspn(line, "\n")] = 0;
-            char *token = strtok(line, " ");
-            while (token != NULL) {
-                do_sim(cache_sim, token);
-                token = strtok(NULL, " ");
-            }
+
+    int page;
+    CacheSimulator* cache_sim;
+
+    for (int cache_slots = 100; cache_slots <= 1000; cache_slots += 100) {
+        cache_sim = newCacheSimulator(cache_slots);
+        while (fscanf(data_file, "%d", &page) != EOF) {
+            do_sim(cache_sim, page);
         }
         print_stats(cache_sim);
-        free(cache_sim);
-        // Reset file pointer to the beginning of the file
-        fseek(data_file, 0, SEEK_SET);
+        rewind(data_file); // Reset file pointer to beginning
+        free(cache_sim->cache); // Free memory allocated for cache
+        free(cache_sim); // Free memory allocated for CacheSimulator
     }
+
     fclose(data_file);
     return 0;
 }
-
