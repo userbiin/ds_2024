@@ -7,7 +7,7 @@ class CircularLinkedListBasic:
     def __init__(self):
         self.tail = ListNode("dummy", None)
         self.tail.next = self.tail 
-        self.numItems = 0
+        # self.numItems = 0
         
 class CacheSimulator:
     def __init__(self, cache_slots):
@@ -52,8 +52,6 @@ class CacheSimulator:
                 self.head = node
                 self.tail = node
             else:
-
-
                 # Add MRU
                 node.next = self.head
                 self.head.prev = node
