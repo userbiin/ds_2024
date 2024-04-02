@@ -1,7 +1,9 @@
 from listQueue import ListQueue
 import threading
-import time
+import time 
 
+import sys
+print(sys.path)
 class Producer: 
     def __init__(self, items):
         self.__alive = True
@@ -55,33 +57,4 @@ class Consumer:
     def finish(self):
         self.__alive = False
         self.worker.join()
-
-if __name__ == "__main__":
     
-    #import sys
-    #print(sys.path)
-
-    wq = ListQueue()
-    customers = []
-    with open("customer.txt", 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            customer = line.split()
-            customers.append(customer)
-
-    # FIFO
-    names = []
-    for c in customers:
-        names.append(c[1])
-
-    producer = Producer(names)
-
-    # Priority 
-    producer = Producer(customers)
-
-    consumer = Consumer()    
-    producer.start()
-    consumer.start()
-    time.sleep(10)
-    producer.finish()     #alive -> false -> run함수에서 break
-    consumer.finish()
