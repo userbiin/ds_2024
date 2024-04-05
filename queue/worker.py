@@ -22,7 +22,11 @@ class Producer:
             time.sleep(0.2)
             if self.__alive:       #계속 시킴
                 item = self.get_item()
-                print("Arrived: ", item)
+                if item is not None:
+                    print("Arrived: ", item[1])
+                else:
+                    print("Arrived: None")
+                
             else:
                 break     #죽임
 
@@ -36,15 +40,17 @@ class Producer:
         self.worker.join()   # join() -> thread가 작업을 마무리하고 break할 때까지 기다렸다가 다 break되면 main도 죽음
 
 class Consumer:
-    def __init__(self):
+    def __init__(self, queue):
         self.__alive = True
         self.worker = threading.Thread(target = self.run)
+        self.queue = queue
 
     def run(self):
         while True:
             time.sleep(1)
             if self.__alive:
-                print("Boarding:")
+                customer = self.queue.dequeue()
+                print("Boarding:", customer[1])
             else: 
                 break
         print("Consumer is dying.")
@@ -61,25 +67,24 @@ if __name__ == "__main__":
     #import sys
     #print(sys.path)
 
-    wq = ListQueue()
+    consumer_wq = ListQueue()
     customers = []
-    with open("customer.txt", 'r') as file:
+    with open("queue/customer.txt", 'r') as file:
         lines = file.readlines()
         for line in lines:
             customer = line.split()
             customers.append(customer)
+            consumer_wq.enqueue(customer)
 
     # FIFO
-    names = []
-    for c in customers:
-        names.append(c[1])
+    #names = []
+    #for c in customers:
+    #    names.append(c[1])
 
-    producer = Producer(names)
 
     # Priority 
     producer = Producer(customers)
-
-    consumer = Consumer()    
+    consumer = Consumer(consumer_wq)    
     producer.start()
     consumer.start()
     time.sleep(10)

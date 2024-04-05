@@ -4,6 +4,7 @@ import time
 
 import sys
 print(sys.path)
+
 class Producer: 
     def __init__(self, items):
         self.__alive = True
