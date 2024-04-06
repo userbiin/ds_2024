@@ -44,13 +44,14 @@ class Consumer:
         self.worker = threading.Thread(target=self.run)
         self.queue = queue
 
-    def sort_customer(self):
-        self.queue.sort_queue()
+    # def sort_customer(self):
+    #     self.queue.sort_queue()
 
     def run(self):
         while True:
             time.sleep(1)
             if self.__alive:
+                self.queue.sort_queue()
                 customer = self.queue.dequeue()
                 print("Boarding:", customer[1])
             else: 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     # Priority 
     producer = Producer(customers)
     consumer = Consumer(consumer_wq)  
-    consumer.sort_customer()  
+    # consumer.sort_customer()  
     producer.start()
     consumer.start()
     time.sleep(10)
