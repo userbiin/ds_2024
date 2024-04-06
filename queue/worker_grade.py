@@ -44,6 +44,9 @@ class Consumer:
         self.worker = threading.Thread(target=self.run)
         self.queue = queue
 
+    def sort_customer(self):
+        self.queue.sort_queue()
+
     def run(self):
         while True:
             time.sleep(1)
@@ -61,12 +64,6 @@ class Consumer:
         self.__alive = False
         self.worker.join()
 
-def sort_customers(customers):
-    sorted_customers = [[], [], []]  # 각 등급에 대한 리스트 초기화
-    for customer in customers:
-        grade = int(customer[0]) - 1  # 등급에 맞는 인덱스 계산
-        sorted_customers[grade].append(customer)  # 해당 등급 리스트에 고객 추가
-    return sorted_customers
 
 if __name__ == "__main__":
     consumer_wq = ListQueue()
@@ -76,12 +73,14 @@ if __name__ == "__main__":
         for line in lines:
             customer = line.split()
             customers.append(customer)
-    sorted_customers = sort_customers(customers)
+            consumer_wq.enqueue(customer)
 
-    producer = Producer(sum(sorted_customers, []))  # 등급 순서에 맞게 합친 리스트를 생성자에 전달
-    consumer = Consumer(consumer_wq)    
+    # Priority 
+    producer = Producer(customers)
+    consumer = Consumer(consumer_wq)  
+    consumer.sort_customer()  
     producer.start()
     consumer.start()
     time.sleep(10)
-    producer.finish()
+    producer.finish()     #alive -> false -> run함수에서 break
     consumer.finish()

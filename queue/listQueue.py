@@ -28,6 +28,9 @@ class ListQueue:
 		for i in range(len(self.__queue)):
 			print(self.__queue[i], end = ' ')
 		print()
+
+	def sort_queue(self):
+		self.__queue.sort(key=lambda x: -int(x[0]))
 		
 
 # 코드 7-6
