@@ -63,9 +63,6 @@ class Consumer:
         self.worker.join()
 
 if __name__ == "__main__":
-    
-    #import sys
-    #print(sys.path)
 
     consumer_wq = ListQueue()
     customers = []
@@ -75,12 +72,6 @@ if __name__ == "__main__":
             customer = line.split()
             customers.append(customer)
             consumer_wq.enqueue(customer)
-
-    # FIFO
-    #names = []
-    #for c in customers:
-    #    names.append(c[1])
-
 
     # Priority 
     producer = Producer(customers)

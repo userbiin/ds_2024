@@ -44,9 +44,6 @@ class Consumer:
         self.worker = threading.Thread(target=self.run)
         self.queue = queue
 
-    # def sort_customer(self):
-    #     self.queue.sort_queue()
-
     def run(self):
         while True:
             time.sleep(1)
