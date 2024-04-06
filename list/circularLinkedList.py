@@ -1,5 +1,5 @@
 from list.listNode import ListNode
-from list.linkedListBasic import LinkedListBasic
+#from list.linkedListBasic import LinkedListBasic
 
 class CircularLinkedList:
     def __init__(self):
