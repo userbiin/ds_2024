@@ -24,6 +24,7 @@ class Producer:
                 item = self.get_item()
                 if item is not None:
                     print("Arrived: ", item[1])
+                    
                 else:
                     print("Arrived: None")
             else:
