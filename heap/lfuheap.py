@@ -34,14 +34,10 @@ class minHeap:
                 self.__A[i], self.__A[child] = self.__A[child], self.__A[i]
                 self.__percolateDown(child)
 
-    def buildHeap(self):
-        for i in range((len(self.__A)-2) // 2, -1, -1):
-            self.__percolateDown(i)
-
-    def update(self, new_element):
-        for i, (lpn, _, _) in enumerate(self.__A):
-            if lpn == new_element[0]:
-                self.__A[i] = new_element
+    def update(self, updated_element):
+        for i, lpn_frequency in enumerate(self.__A):
+            if lpn_frequency.lpn == updated_element.lpn:
+                self.__A[i] = updated_element
                 self.__percolateDown(i)
                 break
             
@@ -56,22 +52,3 @@ class minHeap:
 
     def size(self):
         return len(self.__A)
-
-    def headPrint(self):
-        print("=========================")
-        levels = []
-        current_level = [0] 
-        while current_level:
-            next_level = []
-            level_str = ""
-            for i in current_level:
-                if i < len(self.__A):
-                    level_str += str(self.__A[i]) + " "
-                    left_child = 2 * i + 1
-                    right_child = 2 * i + 2
-                    next_level.append(left_child)
-                    next_level.append(right_child)
-            levels.append(level_str)
-            current_level = next_level
-        for level in levels:
-            print(level)
