@@ -1,18 +1,16 @@
 from lfuheap import minHeap
 
 class LFUSimulator:
-    # Program here 
     def __init__(self):
        self.cache = {}
        self.heap = minHeap([])
 
     def lfu_sim(self, cache_slots):
-        # self.cache.clear()
-        # self.heap.clear()
+        self.cache_slots = cache_slots
         self.cache_hit = 0
         self.tot_cnt = 0
-        frequency = 1
-        timestamp = 0
+        # frequency = 1
+        # timestamp = 0
         data_file = open("/workspaces/ds_2024/heap/linkbench.trc")
         for line in data_file.readlines():
             lpn = line.split()[0] # lpn = int(line.split()[0])

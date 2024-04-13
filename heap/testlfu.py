@@ -1,49 +1,46 @@
 from lfuheap import minHeap
 
 class LFUSimulator:
+    # Program here 
     def __init__(self):
-        self.cache = {}  # 캐시를 LPN을 키로, [frequency, timestamp]을 값으로 하는 딕셔너리로 표현
-        self.heap = minHeap()  # LFU 알고리즘에 사용할 MinHeap
-        self.total_requests = 0
-        self.cache_hits = 0
+       self.cache = {}
+       self.heap = minHeap([])
 
     def lfu_sim(self, cache_slots):
-        self.cache.clear()
-        self.heap.clear()
-        self.total_requests = 0
-        self.cache_hits = 0
-
-        data_file = open("linkbench.trc", "r")
+        # self.cache.clear()
+        # self.heap.clear()
+        self.cache_slots = cache_slots
+        self.cache_hit = 0
+        self.tot_cnt = 0
+        # frequency = 1
+        # timestamp = 0
+        data_file = open("/workspaces/ds_2024/heap/linkbench.trc")
         for line in data_file.readlines():
-            lpn = int(line.split()[0])
-            self.total_requests += 1
-
-            # 캐시에 LPN이 이미 있는 경우
+            lpn = line.split()[0] # lpn = int(line.split()[0])
+            self.tot_cnt += 1
+            
             if lpn in self.cache:
-                self.cache_hits += 1
-                frequency, timestamp = self.cache[lpn]
-                frequency += 1
-                self.cache[lpn] = [frequency, timestamp]
-                self.heap.update((lpn, frequency, timestamp))
-            # 캐시에 LPN이 없는 경우
+               self.cache_hit += 1
+               frequency, timestamp = self.cache[lpn]
+               frequency += 1
+               self.cache[lpn] = [frequency, timestamp]
+               self.heap.update((lpn, frequency, timestamp))
+
             else:
-                # 캐시 크기가 채워지지 않은 경우
                 if len(self.cache) < cache_slots:
-                    self.cache[lpn] = [1, self.total_requests]
-                    self.heap.insert((lpn, 1, self.total_requests))
-                # 캐시 크기가 채워진 경우
+                    self.cache[lpn] = [1, self.tot_cnt]
+                    self.heap.insert((lpn, 1, self.tot_cnt))
                 else:
                     min_lpn, min_frequency, min_timestamp = self.heap.min()
                     del self.cache[min_lpn]
                     self.heap.deleteMin()
-                    self.cache[lpn] = [1, self.total_requests]
-                    self.heap.insert((lpn, 1, self.total_requests))
-
-        # 캐시 히트율 출력
-        hit_ratio = self.cache_hits / self.total_requests if self.total_requests > 0 else 0
-        print(f"Cache slots: {cache_slots}, Cache hits: {self.cache_hits}, Hit ratio: {hit_ratio}")
+                    self.cache[lpn] = [1, self.tot_cnt]
+                    self.heap.insert((lpn, 1, self.tot_cnt))
+        
+        hit_ratio = self.cache_hit / self.tot_cnt   
+        print("cache_slot = ", self.cache_slots, "cache_hit = ", self.cache_hit, "hit ratio = ", hit_ratio)
 
 if __name__ == "__main__":
-    simulator = LFUSimulator()
-    for cache_slots in range(100, 1001, 100):
-        simulator.lfu_sim(cache_slots)
+  simulator = LFUSimulator()
+  for cache_slots in range(100, 1000, 100):
+    simulator.lfu_sim(cache_slots)
