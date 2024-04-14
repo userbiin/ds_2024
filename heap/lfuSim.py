@@ -1,5 +1,10 @@
 from lfuheap import minHeap
 
+class LPN_Frequency:
+    def __init__(self, lpn, frequency):
+        self.lpn = lpn
+        self.frequency = frequency
+
 class LFUSimulator:
     def __init__(self):
        self.cache = {}
@@ -9,30 +14,29 @@ class LFUSimulator:
         self.cache_slots = cache_slots
         self.cache_hit = 0
         self.tot_cnt = 0
-        # frequency = 1
-        # timestamp = 0
+        
         data_file = open("/workspaces/ds_2024/heap/linkbench.trc")
         for line in data_file.readlines():
             lpn = line.split()[0] # lpn = int(line.split()[0])
             self.tot_cnt += 1
             
             if lpn in self.cache:
-               self.cache_hit += 1
-               frequency, timestamp = self.cache[lpn]
-               frequency += 1
-               self.cache[lpn] = [frequency, timestamp]
-               self.heap.update((lpn, frequency, timestamp))
+                self.cache_hit += 1
+                lpn_frequency = self.cache[lpn]
+                lpn_frequency.frequency += 1
+                self.cache[lpn] = lpn_frequency
+                self.heap.update(lpn_frequency)
 
             else:
                 if len(self.cache) < cache_slots:
-                    self.cache[lpn] = [1, self.tot_cnt]
-                    self.heap.insert((lpn, 1, self.tot_cnt))
+                    self.cache[lpn] = 1
+                    self.heap.insert((lpn, 1))
                 else:
-                    min_lpn, min_frequency, min_timestamp = self.heap.min()
+                    min_lpn = self.heap.min()
                     del self.cache[min_lpn]
                     self.heap.deleteMin()
-                    self.cache[lpn] = [1, self.tot_cnt]
-                    self.heap.insert((lpn, 1, self.tot_cnt))
+                    self.cache[lpn] = [1]
+                    self.heap.insert((lpn, 1))
         
         hit_ratio = self.cache_hit / self.tot_cnt   
         print("cache_slot = ", self.cache_slots, "cache_hit = ", self.cache_hit, "hit ratio = ", hit_ratio)

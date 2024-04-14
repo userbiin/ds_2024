@@ -9,14 +9,15 @@ class minHeap:
         self.__A.append(x)
         self.__percolateUp(len(self.__A)-1)
 
-    def __percolateUp(self, i:int):
+    def __percolateUp(self, i):
         parent = (i - 1) // 2
-        if i>0 and self.__A[i] < self.__A[parent]:
+        if i > 0 and self.__A[i].frequency < self.__A[parent].frequency:
             self.__A[i], self.__A[parent] = self.__A[parent], self.__A[i]
             self.__percolateUp(parent)
 
+
     def deleteMin(self):
-        if (not self.isEmpty()):
+        if not self.isEmpty():
             min = self.__A[0]
             self.__A[0] = self.__A.pop()
             self.__percolateDown(0)
@@ -24,13 +25,14 @@ class minHeap:
         else:
             return None
         
-    def __percolateDown(self, i: int):
+    def __percolateDown(self, i):
         child = 2 * i + 1
         right = 2 * i + 2
+
         if child <= len(self.__A)-1:
-            if right <= len(self.__A)-1 and self.__A[child] > self.__A[right]:
+            if right <= len(self.__A)-1 and self.__A[child].frequency > self.__A[right].frequency:
                 child = right 
-            if self.__A[i] > self.__A[child]:
+            if self.__A[i].frequency > self.__A[child].frequency:
                 self.__A[i], self.__A[child] = self.__A[child], self.__A[i]
                 self.__percolateDown(child)
 
