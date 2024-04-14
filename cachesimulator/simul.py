@@ -54,7 +54,7 @@ class CacheSimulator:
         print("cache_slot =", self.cache_slots, "cache_hit =", self.cache_hit, "hit ratio =", hit_ratio)
 
 if __name__ == "__main__":
-    data_file = open("/workspaces/ds_2024/ cachesimulator/linkbench.trc")  # Adjust the path to your data file
+    data_file = open("/workspaces/ds_2024/cachesimulator/linkbench.trc")  # Adjust the path to your data file
     lines = data_file.readlines()
     
     for cache_slots in range(100, 1001, 100):

@@ -17,7 +17,7 @@ class LFUSimulator:
         self.cache_slots = cache_slots  # LPN을 추출
         self.tot_cnt += 1
 
-        if self.cache[lpn]:  # cache에 호출된 페이지가 있는 경우
+        if lpn in self.cache:  # cache에 호출된 페이지가 있는 경우
             self.cache_hit += 1
             lpn_frequency = self.cache[lpn]
             lpn_frequency.frequency += 1

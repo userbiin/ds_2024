@@ -63,7 +63,7 @@ class CacheSimulator:
 
 if __name__ == "__main__":
 
-    data_file = open("/workspaces/ds_2024/linkbench.trc")
+    data_file = open("/workspaces/ds_2024/cachesimulator/linkbench.trc")
     lines = data_file.readlines()
     for cache_slots in range(100, 1001, 100):
         cache_sim = CacheSimulator(cache_slots)
