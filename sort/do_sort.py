@@ -13,11 +13,11 @@ def do_sort(input_file):
 
     #shellSort(A)
     #insertionSort(A)
-    #quickSort(A, 0, len(A)-1)
+    quickevenSort(A, 0, len(A)-1)
     #quickEvenSort(A,0, len(A)-1)
-    mergeSort(A, 0, len(A)-1)
+    #mergeSort(A, 0, len(A)-1)
 
-    for i in range(1000, 1010, 1):
+    for i in range(1000, 1050, 1):
         print(A[i], end= " ")
     print("")
 
