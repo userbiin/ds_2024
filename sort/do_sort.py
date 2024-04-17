@@ -11,9 +11,9 @@ def do_sort(input_file):
         lpn = line.split()[0]
         A.append(lpn)
 
-    #shellSort(A)
+    shellSort(A)
     #insertionSort(A)
-    quickevenSort(A, 0, len(A)-1)
+    #quickevenSort(A, 0, len(A)-1)
     #quickEvenSort(A,0, len(A)-1)
     #mergeSort(A, 0, len(A)-1)
 
