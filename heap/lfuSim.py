@@ -59,10 +59,7 @@ class LFUSimulator:
                     self.cache[lpn] = lpn_frequency
                     self.freq_store[lpn] = lpn_frequency.frequency # 딕셔너리 업데이트 
                     self.heap.insert(lpn_frequency)
-                
-        # LPN의 빈도수를 업데이트
-        self.freq_store[lpn] = lpn_frequency.frequency
-
+                    
     def print_stats(self):
         hit_ratio = self.cache_hit / self.tot_cnt
         print("cache_slot =", self.cache_slots, "cache_hit =", self.cache_hit, "hit ratio =", hit_ratio)
